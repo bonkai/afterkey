@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "afterkey"
+version = "0.1.0"
+description = "Dead man's switch for your digital legacy. Shamir-split encrypted vaults."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{name = "Tre Smith"}]
+keywords = ["dead-mans-switch", "digital-legacy", "shamir", "estate-planning", "crypto"]
+
+dependencies = [
+    "click>=8.0",
+    "rich>=13.0",
+    "cryptography>=42.0",
+]
+
+[project.scripts]
+afterkey = "afterkey.cli:cli"
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
