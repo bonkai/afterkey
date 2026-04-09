@@ -138,10 +138,33 @@ def init():
         console.print("[red]Passphrases don't match. Run 'afterkey init' again.[/red]")
         return
 
+    # Share configuration
+    console.print()
+    console.print("[bold]Key splitting[/bold]")
+    console.print("[dim]Your encryption key will be split into shares. You choose how many,[/dim]")
+    console.print("[dim]and how many are needed to unlock. (e.g. 3 of 5 means any 3 people can unlock)[/dim]\n")
+
+    total_shares = int(Prompt.ask("Total number of shares to create", default="5"))
+    if total_shares < 1:
+        console.print("[red]Need at least 1 share.[/red]")
+        return
+
+    if total_shares == 1:
+        threshold = 1
+        console.print("[dim]With 1 share, that person can unlock the vault alone.[/dim]")
+    else:
+        threshold = int(Prompt.ask(
+            f"How many shares needed to unlock (1-{total_shares})",
+            default=str(min(3, total_shares)),
+        ))
+        if threshold < 1 or threshold > total_shares:
+            console.print(f"[red]Threshold must be between 1 and {total_shares}.[/red]")
+            return
+
     # Seal the vault
     console.print("\n[dim]Encrypting vault and generating shares...[/dim]")
     inventory = create_inventory(assets)
-    ciphertext, meta, shares = seal(inventory, passphrase)
+    ciphertext, meta, shares = seal(inventory, passphrase, n=total_shares, k=threshold)
     save(ciphertext, meta)
     console.print("[green]Vault encrypted and saved.[/green]")
 
